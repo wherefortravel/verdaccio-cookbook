@@ -21,7 +21,11 @@ auth:
       # If you have memberOf support on your ldap
       # searchAttributes: ['*', 'memberOf']
       # Else, if you don't (use one or the other):
+      <% if node['verdaccio']['verdaccio-ldap'].attribute?('searchAttributes') %>
+      searchAttributes: <% node['verdaccio']['verdaccio-ldap']['searchAttributes'] %>
+      <% elsif node['verdaccio']['verdaccio-ldap'].attribute?('groupSearchFilter') %>
       groupSearchFilter: "<% node['verdaccio']['verdaccio-ldap']['groupSearchFilter'] %>"
+      <% end %>
       #
       # Optional, default false.
       # If true, then up to 100 credentials at a time will be cached for 5 minutes.
