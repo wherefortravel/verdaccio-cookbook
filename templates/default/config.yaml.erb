@@ -8,30 +8,30 @@ auth:
   ldap:
     type: ldap
     client_options:
-      url: "<% node['verdaccio']['verdaccio-ldap']['url'] %>"
+      url: "<%= node['verdaccio']['verdaccio-ldap']['url'] %>"
       # Only required if you need auth to bind
-      adminDn: "<% node['verdaccio']['verdaccio-ldap']['adminDn'] %>"
-      adminPassword: "<% node['verdaccio']['verdaccio-ldap']['adminPassword'] %>"
+      adminDn: "<%= node['verdaccio']['verdaccio-ldap']['adminDn'] %>"
+      adminPassword: "<%= node['verdaccio']['verdaccio-ldap']['adminPassword'] %>"
       # Search base for users
-      searchBase: "<% node['verdaccio']['verdaccio-ldap']['searchBase'] %>"
-      searchFilter: "<% node['verdaccio']['verdaccio-ldap']['searchFilter'] %>"
+      searchBase: "<%= node['verdaccio']['verdaccio-ldap']['searchBase'] %>"
+      searchFilter: "<%= node['verdaccio']['verdaccio-ldap']['searchFilter'] %>"
       # If you are using groups, this is also needed
-      groupDnProperty: "<% node['verdaccio']['verdaccio-ldap']['groupDnProperty'] %>"
-      groupSearchBase: "<% node['verdaccio']['verdaccio-ldap']['groupSearchBase'] %>"
+      groupDnProperty: "<%= node['verdaccio']['verdaccio-ldap']['groupDnProperty'] %>"
+      groupSearchBase: "<%= node['verdaccio']['verdaccio-ldap']['groupSearchBase'] %>"
       # If you have memberOf support on your ldap
       # searchAttributes: ['*', 'memberOf']
       # Else, if you don't (use one or the other):
       <% if node['verdaccio']['verdaccio-ldap'].attribute?('searchAttributes') %>
-      searchAttributes: <% node['verdaccio']['verdaccio-ldap']['searchAttributes'] %>
+      searchAttributes: <%= node['verdaccio']['verdaccio-ldap']['searchAttributes'] %>
       <% elsif node['verdaccio']['verdaccio-ldap'].attribute?('groupSearchFilter') %>
-      groupSearchFilter: "<% node['verdaccio']['verdaccio-ldap']['groupSearchFilter'] %>"
+      groupSearchFilter: "<%= node['verdaccio']['verdaccio-ldap']['groupSearchFilter'] %>"
       <% end %>
       #
       # Optional, default false.
       # If true, then up to 100 credentials at a time will be cached for 5 minutes.
-      cache: <% node['verdaccio']['verdaccio-ldap']['cache'] %>
+      cache: <%= node['verdaccio']['verdaccio-ldap']['cache'] %>
       # Optional
-      reconnect: <% node['verdaccio']['verdaccio-ldap']['reconnect'] %>
+      reconnect: <%= node['verdaccio']['verdaccio-ldap']['reconnect'] %>
 <% elsif node['verdaccio']['auth'].attribute?('htpasswd') %>
   htpasswd:
     file: <%= ::File.join(node['verdaccio']['auth']['htpasswd']['dir'], 'htpasswd') %>
