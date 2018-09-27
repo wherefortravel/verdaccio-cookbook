@@ -3,8 +3,8 @@
 
 storage: <%= node['verdaccio']['datadir'] %>
 
-<% if node['verdaccio'].attribute?('verdaccio-ldap') %>
 auth:
+<% if node['verdaccio'].attribute?('verdaccio-ldap') %>
   ldap:
     type: ldap
     client_options:
@@ -32,16 +32,7 @@ auth:
       cache: <% node['verdaccio']['verdaccio-ldap']['cache'] %>
       # Optional
       reconnect: <% node['verdaccio']['verdaccio-ldap']['reconnect'] %>
-<% end %>
-
-users:
-  admin:
-    password: <%= Digest::SHA1.hexdigest(node['verdaccio']['admin']['pass']) %>
-<% node['verdaccio']['users'].each do |user,conf| %>
-  <%= user %>:
-    password: <%= Digest::SHA1.hexdigest(conf['pass']) %>
 <% elsif node['verdaccio']['auth'].attribute?('htpasswd') %>
-auth:
   htpasswd:
     file: <%= ::File.join(node['verdaccio']['auth']['htpasswd']['dir'], 'htpasswd') %>
     max_users: <%= node['verdaccio']['auth']['htpasswd']['max_users'] %>
