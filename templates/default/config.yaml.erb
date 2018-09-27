@@ -40,12 +40,19 @@ users:
 <% node['verdaccio']['users'].each do |user,conf| %>
   <%= user %>:
     password: <%= Digest::SHA1.hexdigest(conf['pass']) %>
+<% elsif node['verdaccio']['auth'].attribute?('htpasswd') %>
+auth:
+  htpasswd:
+    file: <%= ::File.join(node['verdaccio']['auth']['htpasswd']['dir'], 'htpasswd') %>
+    max_users: <%= node['verdaccio']['auth']['htpasswd']['max_users'] %>
 <% end %>
 
 uplinks:
-<% node['verdaccio']['repos'].each do |name,url| %>
+<% node['verdaccio']['repos'].each do |name,repo| %>
   <%= name %>:
-    url: <%= url %>
+    <% repo.each() do |key, val| %>
+    <%= key %>: <%= val %>
+    <% end %>
 <% end %>
 
 <% if node['verdaccio']['timeout'] %>
@@ -60,39 +67,28 @@ packages:
 <% node['verdaccio']['filters'].each do |filter| %>
   '<%= filter['name'] %>':
   <% if filter['access'] %>
-    <% if filter['access'] == '@admins' %>
-    access: admin <%= @admins.join(' ') %>
-    <% else %>
-    access: admin <%= filter['access'].join(' ') %>
-    <% end %>
+    access: <%= filter['access'].join(' ') %>
   <% else %>
     access: $all
   <% end %>
   <% if filter['publish'] %>
-    <% if filter['publish'] == '@admins' %>
-    publish: admin <%= @admins.join(' ') %>
-    <% else %>
-    publish: admin <%= filter['publish'].join(' ') %>
-    <% end %>
+    publish: <%= filter['publish'].join(' ') %>
   <% else %>
-    publish: admin
-  <% end %>
-  <% if filter['storage'] %>
-    storage: <%= filter['storage'] %>
+    publish: $authenticated
   <% end %>
   <% if filter['proxy'] %>
     proxy: <%= filter['proxy'] %>
   <% end %>
-  <%- wildcard_is_defined ||= (filter['name'] == '*') -%>
+  <%- wildcard_is_defined ||= (filter['name'] == '**') -%>
 <% end %>
 <%- if !wildcard_is_defined -%>
-  '*':
+  '**':
   <% if node['verdaccio']['strict_access'] %>
-    access: admin <%= @admins.join(' ') %>
+    access: $authenticated
   <% else %>
     access: $all
   <% end %>
-    publish: admin <%= @admins.join(' ') %>
+    publish: $authenticated
     proxy: <%= node['verdaccio']['mainrepo'] %>
 <%- end -%>
 
@@ -120,3 +116,9 @@ no_proxy: <%= node['verdaccio']['proxy']['no_proxy'].join(',') %>
 
 max_body_size: <%= node['verdaccio']['max_body_size'] %>
 <% end %>
+
+publish:
+  allow_offline: <%= node['verdaccio']['allow_offline_publish'] %>
+
+web:
+  enable: <%= node['verdaccio']['enable_web_ui'] %>
